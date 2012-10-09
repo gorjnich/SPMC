@@ -3098,6 +3098,8 @@
       <Filter>music</Filter>
     </ClCompile>
     <ClCompile Include="..\..\xbmc\filesystem\NFSDirectory.cpp" />
+      <Filter>filesystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\xbmc\test\TestUtil.cpp">
       <Filter>test</Filter>
     </ClCompile>
@@ -3145,6 +3147,9 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\messaging\ApplicationMessenger.cpp">
       <Filter>messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\filesystem\VideoDatabaseFile.cpp">
+      <Filter>filesystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -6079,6 +6084,9 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\settings\dialogs\GUIDialogAudioDSPSettings.h">
       <Filter>settings\dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\filesystem\VideoDatabaseFile.h">
+      <Filter>filesystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
