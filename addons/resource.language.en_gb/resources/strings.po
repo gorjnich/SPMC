@@ -744,7 +744,11 @@ msgctxt "#176"
 msgid "Styles"
 msgstr ""
 
-#empty strings from id 177 to 178
+msgctxt "#177"
+msgid "Info"
+msgstr ""
+
+#iempty strings from id 178 to 178
 
 #: xbmc/media/MediaTypes.cpp
 #: xbmc/music/karaoke/GUIDialogKaraokeSongSelector.cpp
