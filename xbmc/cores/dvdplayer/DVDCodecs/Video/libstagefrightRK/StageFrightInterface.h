@@ -25,14 +25,6 @@
 class CStageFrightVideo;
 class CDVDCodecInterface;
 
-namespace KODI
-{
-  namespace MESSAGING
-  {
-    class CApplicationMessenger;
-  }
-}
-
 extern "C"
 {
   void* create_stf(CDVDCodecInterface* interface);

@@ -80,3 +80,4 @@ void stf_ReleaseBuffer(void* stf, CDVDVideoCodecStageFrightBuffer* buf)
 {
   ((CStageFrightVideo*)stf)->ReleaseBuffer(buf);
 }
+
