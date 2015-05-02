@@ -65,14 +65,8 @@ class CJNISurfaceTexture;
 class CWinSystemEGL;
 class CAdvancedSettings;
 class CApplication;
-
-namespace KODI
-{
-  namespace MESSAGING
-  {
-    class CApplicationMessenger;
-  }
-}
+class CApplicationMessenger;
+class CXBMCRenderManager;
 
 struct stSlot
 {
@@ -132,6 +126,7 @@ public:
   KODI::MESSAGING::CApplicationMessenger* m_g_applicationMessenger;
   CWinSystemEGL* m_g_Windowing;
   CAdvancedSettings* m_g_advancedSettings;
+  CXBMCRenderManager* m_g_renderManager;
 
   CFrameBufferObject fbo;
   EGLDisplay eglDisplay;
