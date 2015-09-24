@@ -24,15 +24,15 @@
 
 #include "system.h"
 #include "DVDAudioCodec.h"
+#include "DVDStreamInfo.h"
 #include "cores/AudioEngine/Utils/AEAudioFormat.h"
-#include "cores/AudioEngine/Utils/AEStreamInfo.h"
-#include "cores/AudioEngine/Utils/AEBitstreamPacker.h"
+#include "cores/AudioEngine/Utils/AEChannelInfo.h"
 
-class CDVDAudioCodecPassthrough : public CDVDAudioCodec
+class CDVDAudioCodecPassthroughRaw : public CDVDAudioCodec
 {
 public:
-  CDVDAudioCodecPassthrough();
-  virtual ~CDVDAudioCodecPassthrough();
+  CDVDAudioCodecPassthroughRaw();
+  virtual ~CDVDAudioCodecPassthroughRaw();
 
   virtual bool Open(CDVDStreamInfo &hints, CDVDCodecOptions &options);
   virtual void Dispose();
@@ -40,18 +40,16 @@ public:
   virtual int  GetData(uint8_t** dst);
   virtual void Reset();
   virtual int  GetChannels               ();
-  virtual int  GetEncodedChannels        ();
   virtual CAEChannelInfo GetChannelMap       ();
   virtual int  GetSampleRate             ();
-  virtual int  GetEncodedSampleRate      ();
   virtual enum AEDataFormat GetDataFormat();
   virtual bool NeedPassthrough           () { return true;          }
-  virtual const char* GetName            () { return "passthrough"; }
+  virtual const char* GetName            () { return "passthroughraw"; }
   virtual int  GetBufferSize();
 private:
-  CAEStreamInfo      m_info;
-  CAEBitstreamPacker m_packer;
-  uint8_t*           m_buffer;
-  unsigned int       m_bufferSize;
+  CDVDStreamInfo     m_hints;
+  uint8_t*           m_outBuf;
+  unsigned int       m_bufSize;
+  unsigned int       m_outBufSize;
 };
 

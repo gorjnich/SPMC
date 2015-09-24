@@ -90,6 +90,6 @@ public:
   /*
     Does the sink wants encapsulated bitstream
   */
-  virtual bool  WantsIEC61937(AEDataFormat format) {return true;};
+  virtual bool  WantsIEC61937() {return true;};
 };
 

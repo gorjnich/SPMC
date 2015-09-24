@@ -236,7 +236,7 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
       CLog::Log(LOGNOTICE, "Using Rockchip hacked Passthrough");
       stream = CJNIAudioManager::STREAM_VOICE_CALL;
     }
-    else if (!WantsIEC61937(m_format.m_dataFormat))
+    else if (!WantsIEC61937())
     {
       encoding = CJNIAudioFormat::ENCODING_AC3;
     }
@@ -407,10 +407,10 @@ void CAESinkAUDIOTRACK::Drain()
   m_frames_written = 0;
 }
 
-bool CAESinkAUDIOTRACK::WantsIEC61937(AEDataFormat format)
+bool CAESinkAUDIOTRACK::WantsIEC61937()
 {
   /*
-  if (format == AE_FMT_AC3 && CJNIAudioManager::GetSDKVersion() >= 21)
+  if (CJNIAudioManager::GetSDKVersion() >= 21)
     return false;
   */
 

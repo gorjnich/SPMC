@@ -228,7 +228,7 @@ public:
    * Returns true if the AudioEngine is currently configured for IEC 61937 encapsulated bitstream
    * @returns true if the AudioEngine is currently configured for IEC 61937 encapsulated bitstream
    */
-  virtual bool WantsIEC61937(AEDataFormat format) { return true; }
+  virtual bool WantsIEC61937() { return true; }
 
   virtual void RegisterAudioCallback(IAudioCallback* pCallback) {}
 

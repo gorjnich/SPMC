@@ -139,10 +139,10 @@ bool CActiveAESink::SupportsFormat(const std::string &device, AEDataFormat forma
   return false;
 }
 
-bool CActiveAESink::WantsIEC61937(AEDataFormat format)
+bool CActiveAESink::WantsIEC61937()
 {
   if (m_sink)
-    return m_sink->WantsIEC61937(format);
+    return m_sink->WantsIEC61937();
 
   return true;
 }

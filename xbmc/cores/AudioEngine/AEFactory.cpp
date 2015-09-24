@@ -218,10 +218,10 @@ bool CAEFactory::HasHDAudioChannelCount()
   return false;
 }
 
-bool CAEFactory::WantsIEC61937(AEDataFormat format)
+bool CAEFactory::WantsIEC61937()
 {
   if(AE)
-    return AE->WantsIEC61937(format);
+    return AE->WantsIEC61937();
   return true;
 }
 

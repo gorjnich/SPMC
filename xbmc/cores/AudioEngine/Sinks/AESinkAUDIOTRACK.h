@@ -45,7 +45,7 @@ public:
   virtual double       GetCacheTotal   ();
   virtual unsigned int AddPackets      (uint8_t **data, unsigned int frames, unsigned int offset);
   virtual void         Drain           ();
-  virtual bool         WantsIEC61937   (AEDataFormat format);
+  virtual bool         WantsIEC61937   ();
   static void          EnumerateDevicesEx(AEDeviceInfoList &list, bool force = false);
 
 protected:
