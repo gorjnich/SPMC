@@ -21,6 +21,7 @@
 #include "DVDAudioCodecPassthroughRaw.h"
 #include "DVDCodecs/DVDCodecs.h"
 #include "cores/AudioEngine/AEFactory.h"
+#include "utils/log.h"
 
 #include <algorithm>
 
@@ -59,6 +60,7 @@ bool CDVDAudioCodecPassthroughRaw::Open(CDVDStreamInfo &hints, CDVDCodecOptions 
       (m_hints.codec == AV_CODEC_ID_DTS && bSupportsDTSOut) ||
       (m_hints.codec == AV_CODEC_ID_TRUEHD && bSupportsTrueHDOut))
   {
+    CLog::Log(LOGDEBUG, "raw pt: sr:%d ch:%d br:%d", m_hints.samplerate, m_hints.channels, m_hints.bitrate);
     return true;
   }
 
@@ -93,7 +95,15 @@ enum AEDataFormat CDVDAudioCodecPassthroughRaw::GetDataFormat()
 
 int CDVDAudioCodecPassthroughRaw::GetChannels()
 {
-  return m_hints.channels;
+  switch (m_hints.codec)
+  {
+    case AV_CODEC_ID_AC3:
+    case AV_CODEC_ID_DTS:
+      return 2;
+
+    default:
+      return 8;
+  }
 }
 
 CAEChannelInfo CDVDAudioCodecPassthroughRaw::GetChannelMap()
@@ -126,8 +136,8 @@ int CDVDAudioCodecPassthroughRaw::Decode(uint8_t* pData, int iSize)
   {
     delete[] m_outBuf;
     m_outBuf = new uint8_t[iSize];
+    m_outBufSize = iSize;
   }
-  m_outBufSize = iSize;
   memcpy(m_outBuf, pData, iSize);
 
   m_bufSize = iSize;

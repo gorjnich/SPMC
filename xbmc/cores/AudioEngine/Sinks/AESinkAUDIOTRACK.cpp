@@ -409,10 +409,8 @@ void CAESinkAUDIOTRACK::Drain()
 
 bool CAESinkAUDIOTRACK::WantsIEC61937()
 {
-  /*
   if (CJNIAudioManager::GetSDKVersion() >= 21)
     return false;
-  */
 
   return true;
 }
