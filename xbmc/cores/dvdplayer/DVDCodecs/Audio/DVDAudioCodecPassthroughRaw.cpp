@@ -72,6 +72,11 @@ int CDVDAudioCodecPassthroughRaw::GetSampleRate()
   return m_hints.samplerate;
 }
 
+int CDVDAudioCodecPassthroughRaw::GetEncodedSampleRate()
+{
+  return m_hints.samplerate;
+}
+
 enum AEDataFormat CDVDAudioCodecPassthroughRaw::GetDataFormat()
 {
   switch(m_hints.codec)
@@ -104,6 +109,11 @@ int CDVDAudioCodecPassthroughRaw::GetChannels()
     default:
       return 8;
   }
+}
+
+int CDVDAudioCodecPassthroughRaw::GetEncodedChannels()
+{
+  return m_hints.channels;
 }
 
 CAEChannelInfo CDVDAudioCodecPassthroughRaw::GetChannelMap()

@@ -47,6 +47,7 @@ bool CDVDAudioCodecPassthrough::Open(CDVDStreamInfo &hints, CDVDCodecOptions &op
 
   /* only get the dts core from the parser if we don't support dtsHD */
   m_info.SetCoreOnly(!bSupportsDTSHDOut);
+  m_info.SetWantsIEC61937(CAEFactory::WantsIEC61937());
   m_bufferSize = 0;
 
   /* 32kHz E-AC-3 passthrough requires 128kHz IEC 60958 stream

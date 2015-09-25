@@ -40,8 +40,10 @@ public:
   virtual int  GetData(uint8_t** dst);
   virtual void Reset();
   virtual int  GetChannels               ();
-  virtual CAEChannelInfo GetChannelMap       ();
+  virtual int  GetEncodedChannels        ();
+  virtual CAEChannelInfo GetChannelMap   ();
   virtual int  GetSampleRate             ();
+  virtual int  GetEncodedSampleRate      ();
   virtual enum AEDataFormat GetDataFormat();
   virtual bool NeedPassthrough           () { return true;          }
   virtual const char* GetName            () { return "passthroughraw"; }
