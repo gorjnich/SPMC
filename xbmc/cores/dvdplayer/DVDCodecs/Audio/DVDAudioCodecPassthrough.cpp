@@ -21,6 +21,7 @@
 #include "DVDAudioCodecPassthrough.h"
 #include "DVDCodecs/DVDCodecs.h"
 #include "DVDStreamInfo.h"
+#include "utils/log.h"
 
 #include <algorithm>
 
@@ -47,7 +48,16 @@ bool CDVDAudioCodecPassthrough::Open(CDVDStreamInfo &hints, CDVDCodecOptions &op
 
   /* only get the dts core from the parser if we don't support dtsHD */
   m_info.SetCoreOnly(!bSupportsDTSHDOut);
-  m_info.SetWantsIEC61937(CAEFactory::WantsIEC61937());
+  if (CAEFactory::WantsIEC61937())
+  {
+    CLog::Log(LOGDEBUG, "CDVDAudioCodecPassthrough::Open Wanting IEC61937");
+    m_info.SetWantsIEC61937(true);
+  }
+  else
+  {
+    CLog::Log(LOGDEBUG, "CDVDAudioCodecPassthrough::Open Not wanting IEC61937");
+    m_info.SetWantsIEC61937(false);
+  }
   m_bufferSize = 0;
 
   /* 32kHz E-AC-3 passthrough requires 128kHz IEC 60958 stream

@@ -238,7 +238,15 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
     }
     else if (!WantsIEC61937())
     {
-      encoding = CJNIAudioFormat::ENCODING_AC3;
+      switch (m_format.m_dataFormat)
+      {
+        case AE_FMT_AC3:
+          encoding = CJNIAudioFormat::ENCODING_AC3;
+          break;
+
+        default:
+          break;
+      }
     }
   }
   else
@@ -269,10 +277,9 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
     int min_buffer_size       = CJNIAudioTrack::getMinBufferSize( m_format.m_sampleRate,
                                                                   atChannelMask,
                                                                   encoding);
-    if (encoding == CJNIAudioFormat::ENCODING_AC3)
-      m_format.m_frameSize      = 4;
-    else
-      m_format.m_frameSize      = m_format.m_channelLayout.Count() *
+    if (m_passthrough)
+      min_buffer_size *= 2;
+    m_format.m_frameSize      = m_format.m_channelLayout.Count() *
                                   (CAEUtil::DataFormatToBits(m_format.m_dataFormat) / 8);
     m_sink_frameSize          = m_format.m_frameSize;
     m_min_frames              = min_buffer_size / m_sink_frameSize;
@@ -353,6 +360,7 @@ void CAESinkAUDIOTRACK::GetDelay(AEDelayStatus& status)
   // return a 32bit "int" that you should "interpret as unsigned."  As such,
   // for wrap saftey, we need to do all ops on it in 32bit integer math.
   uint32_t head_pos = (uint32_t)m_at_jni->getPlaybackHeadPosition();
+  CLog::Log(LOGDEBUG, "CAESinkAUDIOTRACK::GetDelay %d", head_pos);
 
   double delay = (double)(m_frames_written - head_pos) / m_format.m_sampleRate;
 
@@ -393,6 +401,7 @@ unsigned int CAESinkAUDIOTRACK::AddPackets(uint8_t **data, unsigned int frames, 
     m_frames_written += written / m_sink_frameSize;
   }
 
+  CLog::Log(LOGDEBUG, "CAESinkAUDIOTRACK::AddPackets %d/%d written", written, (unsigned int)(written/m_sink_frameSize));
   return (unsigned int)(written/m_sink_frameSize);
 }
 
@@ -409,8 +418,8 @@ void CAESinkAUDIOTRACK::Drain()
 
 bool CAESinkAUDIOTRACK::WantsIEC61937()
 {
-  if (CJNIAudioManager::GetSDKVersion() >= 21)
-    return false;
+//  if (CJNIAudioManager::GetSDKVersion() >= 21)
+//    return false;
 
   return true;
 }

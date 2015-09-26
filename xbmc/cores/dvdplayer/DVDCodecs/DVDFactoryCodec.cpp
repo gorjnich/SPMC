@@ -58,7 +58,6 @@
 #endif
 #include "Audio/DVDAudioCodecFFmpeg.h"
 #include "Audio/DVDAudioCodecPassthrough.h"
-#include "Audio/DVDAudioCodecPassthroughRaw.h"
 #include "Overlay/DVDOverlayCodecSSA.h"
 #include "Overlay/DVDOverlayCodecText.h"
 #include "Overlay/DVDOverlayCodecTX3G.h"
@@ -344,10 +343,7 @@ CDVDAudioCodec* CDVDFactoryCodec::CreateAudioCodec( CDVDStreamInfo &hint)
   CDVDCodecOptions options;
 
   // try passthrough first
-  if (CAEFactory::WantsIEC61937())
-    pCodec = OpenCodec( new CDVDAudioCodecPassthrough(), hint, options );
-  else
-    pCodec = OpenCodec( new CDVDAudioCodecPassthroughRaw(), hint, options );
+  pCodec = OpenCodec( new CDVDAudioCodecPassthrough(), hint, options );
   if( pCodec ) return pCodec;
 
   pCodec = OpenCodec( new CDVDAudioCodecFFmpeg(), hint, options );
