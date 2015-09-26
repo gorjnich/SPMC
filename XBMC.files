@@ -9707,6 +9707,4 @@ xbmc/filesystem/posix/PosixFile.h
 xbmc/filesystem/posix/PosixDirectory.h
 xbmc/filesystem/posix/PosixFile.cpp
 xbmc/filesystem/posix/PosixDirectory.cpp
-xbmc/cores/dvdplayer/DVDCodecs/Audio/DVDAudioCodecPassthroughRaw.cpp
-xbmc/cores/dvdplayer/DVDCodecs/Audio/DVDAudioCodecPassthroughRaw.h
 xbmc/cores/dvdplayer/DVDCodecs/Audio/Makefile.in
