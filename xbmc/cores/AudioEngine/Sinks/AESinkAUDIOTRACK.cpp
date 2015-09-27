@@ -244,6 +244,10 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
           encoding = CJNIAudioFormat::ENCODING_AC3;
           break;
 
+        case AE_FMT_EAC3:
+          encoding = CJNIAudioFormat::ENCODING_E_AC3;
+          break;
+
         default:
           break;
       }
@@ -322,6 +326,7 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
     m_volume = CXBMCApp::GetSystemVolume();
     CXBMCApp::SetSystemVolume(1.0);
   }
+  m_at_jni->play();
 
   return true;
 }
@@ -360,7 +365,6 @@ void CAESinkAUDIOTRACK::GetDelay(AEDelayStatus& status)
   // return a 32bit "int" that you should "interpret as unsigned."  As such,
   // for wrap saftey, we need to do all ops on it in 32bit integer math.
   uint32_t head_pos = (uint32_t)m_at_jni->getPlaybackHeadPosition();
-  CLog::Log(LOGDEBUG, "CAESinkAUDIOTRACK::GetDelay %d", head_pos);
 
   double delay = (double)(m_frames_written - head_pos) / m_format.m_sampleRate;
 
@@ -401,7 +405,6 @@ unsigned int CAESinkAUDIOTRACK::AddPackets(uint8_t **data, unsigned int frames, 
     m_frames_written += written / m_sink_frameSize;
   }
 
-  CLog::Log(LOGDEBUG, "CAESinkAUDIOTRACK::AddPackets %d/%d written", written, (unsigned int)(written/m_sink_frameSize));
   return (unsigned int)(written/m_sink_frameSize);
 }
 
@@ -418,8 +421,8 @@ void CAESinkAUDIOTRACK::Drain()
 
 bool CAESinkAUDIOTRACK::WantsIEC61937()
 {
-//  if (CJNIAudioManager::GetSDKVersion() >= 21)
-//    return false;
+  if (CJNIAudioManager::GetSDKVersion() >= 21)
+    return false;
 
   return true;
 }
@@ -460,6 +463,8 @@ void CAESinkAUDIOTRACK::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
     }
     m_info.m_dataFormats.push_back(AE_FMT_AC3);
     m_info.m_dataFormats.push_back(AE_FMT_DTS);
+    if (CJNIAudioManager::GetSDKVersion() >= 21)
+      m_info.m_dataFormats.push_back(AE_FMT_EAC3);
   }
 #if 0 //defined(__ARM_NEON__)
   if (g_cpuInfo.GetCPUFeatures() & CPU_FEATURE_NEON)
