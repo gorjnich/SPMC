@@ -202,6 +202,8 @@ CAESinkAUDIOTRACK::CAESinkAUDIOTRACK()
   m_audiotrackbuffer_sec = 0.0;
   m_at_jni = NULL;
   m_frames_written = 0;
+  m_lastHeadPosition = 0;
+  m_ptOffset = 0;
 }
 
 CAESinkAUDIOTRACK::~CAESinkAUDIOTRACK()
@@ -348,6 +350,8 @@ void CAESinkAUDIOTRACK::Deinitialize()
   m_at_jni->release();
   
   m_frames_written = 0;
+  m_lastHeadPosition = 0;
+  m_ptOffset = 0;
 
   delete m_at_jni;
   m_at_jni = NULL;
@@ -366,6 +370,15 @@ void CAESinkAUDIOTRACK::GetDelay(AEDelayStatus& status)
   // for wrap saftey, we need to do all ops on it in 32bit integer math.
   uint32_t head_pos = (uint32_t)m_at_jni->getPlaybackHeadPosition();
 
+  if (m_passthrough && !WantsIEC61937())
+  {
+    if (m_at_jni->getPlayState() == CJNIAudioTrack::PLAYSTATE_STOPPED)
+      m_lastHeadPosition = head_pos;
+    else if (!head_pos && m_at_jni->getPlayState() == CJNIAudioTrack::PLAYSTATE_PAUSED)
+      m_ptOffset = m_lastHeadPosition;
+    head_pos += m_ptOffset;
+    m_lastHeadPosition = head_pos;
+  }
   double delay = (double)(m_frames_written - head_pos) / m_format.m_sampleRate;
 
   status.SetDelay(delay);
