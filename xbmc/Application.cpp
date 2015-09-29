@@ -828,8 +828,8 @@ bool CApplication::InitWindow()
   }
 #elif defined(TARGET_ANDROID)
   // We might come from a refresh rate switch destroying the native window; use the renderer resolution
-  if (g_renderManager.GetResolution() != RES_INVALID)
-    res = g_renderManager.GetResolution();
+  if (g_graphicsContext.GetVideoResolution() != RES_INVALID)
+    res = g_graphicsContext.GetVideoResolution();
   RESOLUTION_INFO res_info = CDisplaySettings::Get().GetResolutionInfo(res);
 
   bool bFullScreen = res != RES_WINDOW;
