@@ -250,6 +250,18 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
           encoding = CJNIAudioFormat::ENCODING_E_AC3;
           break;
 
+        case AE_FMT_DTS:
+          encoding = CJNIAudioFormat::ENCODING_DTS;
+          break;
+
+        case AE_FMT_DTSHD:
+          encoding = CJNIAudioFormat::ENCODING_DTS_HD;
+          break;
+
+        case AE_FMT_TRUEHD:
+          encoding = CJNIAudioFormat::ENCODING_DOLBY_TRUEHD;
+          break;
+
         default:
           break;
       }
@@ -477,7 +489,11 @@ void CAESinkAUDIOTRACK::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
     m_info.m_dataFormats.push_back(AE_FMT_AC3);
     m_info.m_dataFormats.push_back(AE_FMT_DTS);
     if (CJNIAudioManager::GetSDKVersion() >= 21)
+    {
       m_info.m_dataFormats.push_back(AE_FMT_EAC3);
+      m_info.m_dataFormats.push_back(AE_FMT_DTSHD);
+      m_info.m_dataFormats.push_back(AE_FMT_TRUEHD);
+    }
   }
 #if 0 //defined(__ARM_NEON__)
   if (g_cpuInfo.GetCPUFeatures() & CPU_FEATURE_NEON)
