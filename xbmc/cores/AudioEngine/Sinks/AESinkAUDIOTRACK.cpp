@@ -73,11 +73,12 @@ static void pa_sconv_s16le_from_f32ne_neon(unsigned n, const float32_t *a, int16
  */
 #define LIMIT_TO_STEREO_AND_5POINT1_AND_7POINT1 1
 
-/* Size of a frame for passthrough output. */
-#define AOUT_SPDIF_SIZE 6144
-
-/* Number of samples in an A/52 frame. */
-#define A52_FRAME_NB 1536
+#define DTS1_FRAME_SIZE   512
+#define DTS2_FRAME_SIZE   1024
+#define DTS3_FRAME_SIZE   2048
+#define AC3_FRAME_SIZE    1536
+#define EAC3_FRAME_SIZE   6144
+#define TRUEHD_FRAME_SIZE 15360
 
 static const AEChannel KnownChannels[] = { AE_CH_FL, AE_CH_FR, AE_CH_FC, AE_CH_LFE, AE_CH_SL, AE_CH_SR, AE_CH_BL, AE_CH_BR, AE_CH_BC, AE_CH_BLOC, AE_CH_BROC, AE_CH_NULL };
 
@@ -197,7 +198,6 @@ CAEDeviceInfo CAESinkAUDIOTRACK::m_info;
 CAESinkAUDIOTRACK::CAESinkAUDIOTRACK()
 {
   m_alignedS16 = NULL;
-  m_min_frames = 0;
   m_sink_frameSize = 0;
   m_audiotrackbuffer_sec = 0.0;
   m_at_jni = NULL;
@@ -292,16 +292,25 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
   while (!m_at_jni)
   {
     m_format.m_channelLayout  = AUDIOTRACKChannelMaskToAEChannelMap(atChannelMask);
-    int min_buffer_size       = CJNIAudioTrack::getMinBufferSize( m_format.m_sampleRate,
+    unsigned int min_buffer_size       = CJNIAudioTrack::getMinBufferSize( m_format.m_sampleRate,
                                                                   atChannelMask,
                                                                   encoding);
-    if (m_passthrough)
-      min_buffer_size *= 2;
     m_format.m_frameSize      = m_format.m_channelLayout.Count() *
                                   (CAEUtil::DataFormatToBits(m_format.m_dataFormat) / 8);
     m_sink_frameSize          = m_format.m_frameSize;
-    m_min_frames              = min_buffer_size / m_sink_frameSize;
-    m_audiotrackbuffer_sec    = (double)m_min_frames / (double)m_format.m_sampleRate;
+
+    if (encoding == CJNIAudioFormat::ENCODING_AC3 || encoding == CJNIAudioFormat::ENCODING_E_AC3)
+    {
+      m_format.m_frames       = AC3_FRAME_SIZE;
+    }
+    else
+      m_format.m_frames       = (int)(m_format.m_sampleRate * 0.015); //default to 15ms chunks
+    m_format.m_frameSamples   = m_format.m_frames * m_format.m_channelLayout.Count();
+
+    min_buffer_size           = std::max(min_buffer_size*4, m_format.m_frames * m_sink_frameSize);
+
+    int min_frames            = min_buffer_size / m_sink_frameSize;
+    m_audiotrackbuffer_sec    = (double)min_frames / (double)m_format.m_sampleRate;
 
     m_at_jni                  = CreateAudioTrack(stream, m_format.m_sampleRate,
                                                  atChannelMask, encoding,
@@ -328,9 +337,6 @@ bool CAESinkAUDIOTRACK::Initialize(AEAudioFormat &format, std::string &device)
     }
   }
 
-  m_format.m_frames         = m_min_frames / 2;
-
-  m_format.m_frameSamples   = m_format.m_frames * m_format.m_channelLayout.Count();
   format                    = m_format;
 
   // Force volume to 100% for passthrough
@@ -384,9 +390,7 @@ void CAESinkAUDIOTRACK::GetDelay(AEDelayStatus& status)
 
   if (m_passthrough && !WantsIEC61937())
   {
-    if (m_at_jni->getPlayState() == CJNIAudioTrack::PLAYSTATE_STOPPED)
-      m_lastHeadPosition = head_pos;
-    else if (!head_pos && m_at_jni->getPlayState() == CJNIAudioTrack::PLAYSTATE_PAUSED)
+    if (!head_pos && m_at_jni->getPlayState() == CJNIAudioTrack::PLAYSTATE_PAUSED)
       m_ptOffset = m_lastHeadPosition;
     head_pos += m_ptOffset;
     m_lastHeadPosition = head_pos;
