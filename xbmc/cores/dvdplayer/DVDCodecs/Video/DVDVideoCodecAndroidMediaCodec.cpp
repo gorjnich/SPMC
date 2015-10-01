@@ -649,9 +649,34 @@ int CDVDVideoCodecAndroidMediaCodec::Decode(uint8_t *pData, int iSize, double dt
         iSize = size;
       }
       // fetch a pointer to the ByteBuffer backing store
-      void *dst_ptr = xbmc_jnienv()->GetDirectBufferAddress(buffer.get_raw());
+      uint8_t *dst_ptr = (uint8_t*)xbmc_jnienv()->GetDirectBufferAddress(buffer.get_raw());
       if (dst_ptr)
-        memcpy(dst_ptr, pData, iSize);
+      {
+        // Codec specifics
+        switch(m_hints.codec)
+        {
+          case AV_CODEC_ID_VC1:
+          {
+            if (pData[0] == 0x00 && pData[1] == 0x00 && pData[2] == 0x01 && pData[3] == 0x0d)
+              memcpy(dst_ptr, pData, iSize);
+            else
+            {
+              dst_ptr[0] = 0x00;
+              dst_ptr[2] = 0x00;
+              dst_ptr[3] = 0x01;
+              dst_ptr[4] = 0x0d;
+              memcpy(dst_ptr+4, pData, iSize);
+              iSize += 4;
+            }
+
+            break;
+          }
+
+          default:
+            memcpy(dst_ptr, pData, iSize);
+            break;
+        }
+      }
 
       // Translate from dvdplayer dts/pts to MediaCodec pts,
       // pts WILL get re-ordered by MediaCodec if needed.
