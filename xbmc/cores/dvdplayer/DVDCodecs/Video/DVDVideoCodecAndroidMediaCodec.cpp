@@ -376,7 +376,7 @@ bool CDVDVideoCodecAndroidMediaCodec::Open(CDVDStreamInfo &hints, CDVDCodecOptio
       if (seq_offset > m_hints.extrasize-4)
         return false;
 
-      if (!seq_offset)
+      if (seq_offset)
       {
         free(m_hints.extradata);
         m_hints.extrasize -= seq_offset;
@@ -662,9 +662,9 @@ int CDVDVideoCodecAndroidMediaCodec::Decode(uint8_t *pData, int iSize, double dt
             else
             {
               dst_ptr[0] = 0x00;
-              dst_ptr[2] = 0x00;
-              dst_ptr[3] = 0x01;
-              dst_ptr[4] = 0x0d;
+              dst_ptr[1] = 0x00;
+              dst_ptr[2] = 0x01;
+              dst_ptr[3] = 0x0d;
               memcpy(dst_ptr+4, pData, iSize);
               iSize += 4;
             }
