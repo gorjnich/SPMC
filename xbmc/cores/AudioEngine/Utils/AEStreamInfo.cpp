@@ -336,8 +336,8 @@ unsigned int CAEStreamInfo::SyncAC3(uint8_t *data, unsigned int size)
       switch (fscod)
       {
         case 0: framesize = bitRate * 2; break;
-        case 1: framesize = (320 * bitRate / 147 + (frmsizecod & 1 ? 1 : 0)); break;
-        case 2: framesize = bitRate * 4; break;
+        case 1: framesize = (320 * bitRate / 147 + (frmsizecod & 1)); break;
+        case 2: framesize = bitRate * 3; break;
       }
 
       m_fsize = framesize << 1;

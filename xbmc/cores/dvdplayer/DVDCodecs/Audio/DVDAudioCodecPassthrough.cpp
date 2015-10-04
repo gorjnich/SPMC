@@ -80,6 +80,37 @@ bool CDVDAudioCodecPassthrough::Open(CDVDStreamInfo &hints, CDVDCodecOptions &op
   return false;
 }
 
+void CDVDAudioCodecPassthrough::GetData(DVDAudioFrame &frame)
+{
+  frame.nb_frames = 0;
+  frame.data_format           = GetDataFormat();
+  frame.channel_count         = GetChannels();
+  if (CAEFactory::WantsIEC61937())
+  {
+    frame.bits_per_sample       = CAEUtil::DataFormatToBits(frame.data_format);
+    frame.framesize             = (CAEUtil::DataFormatToBits(frame.data_format) >> 3) * frame.channel_count;
+  }
+  else
+  {
+    frame.bits_per_sample       = 8;
+    frame.framesize             = 1;
+  }
+  frame.nb_frames             = GetData(frame.data)/frame.framesize;
+  frame.channel_layout        = GetChannelMap();
+  frame.channel_count         = GetChannels();
+  frame.planes                = AE_IS_PLANAR(frame.data_format) ? frame.channel_count : 1;
+  frame.encoded_channel_count = GetEncodedChannels();
+  frame.sample_rate           = GetSampleRate();
+  frame.encoded_sample_rate   = GetEncodedSampleRate();
+  frame.passthrough           = NeedPassthrough();
+  frame.pts                   = DVD_NOPTS_VALUE;
+  // compute duration.
+  if (frame.sample_rate)
+    frame.duration = ((double)frame.nb_frames * DVD_TIME_BASE) / frame.sample_rate;
+  else
+    frame.duration = 0.0;
+}
+
 int CDVDAudioCodecPassthrough::GetSampleRate()
 {
   return m_info.GetOutputRate();

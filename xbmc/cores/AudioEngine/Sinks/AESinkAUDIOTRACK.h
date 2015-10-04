@@ -65,4 +65,5 @@ private:
   unsigned int       m_sink_frameSize;
   bool               m_passthrough;
   double             m_audiotrackbuffer_sec;
+  int                m_encoding;
 };
